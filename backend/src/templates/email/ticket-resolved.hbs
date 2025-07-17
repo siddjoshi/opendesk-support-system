@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket Resolved</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .email-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 20px;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4f46e5;
+            margin-bottom: 10px;
+        }
+        .ticket-info {
+            background-color: #f8fafc;
+            border-left: 4px solid #4f46e5;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .ticket-number {
+            font-size: 18px;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 10px;
+        }
+        .ticket-title {
+            font-size: 16px;
+            color: #374151;
+            margin-bottom: 10px;
+        }
+        .ticket-details {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .status-open { background-color: #fee2e2; color: #dc2626; }
+        .status-in_progress { background-color: #fef3c7; color: #d97706; }
+        .status-resolved { background-color: #d1fae5; color: #059669; }
+        .status-closed { background-color: #e5e7eb; color: #6b7280; }
+        .priority-high { background-color: #fee2e2; color: #dc2626; }
+        .priority-medium { background-color: #fef3c7; color: #d97706; }
+        .priority-low { background-color: #e0e7ff; color: #4338ca; }
+        .priority-urgent { background-color: #fce7f3; color: #be185d; }
+        .content {
+            margin: 20px 0;
+            line-height: 1.6;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #4f46e5;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 500;
+            margin: 20px 0;
+        }
+        .button:hover {
+            background-color: #4338ca;
+        }
+        .success-highlight {
+            background-color: #ecfdf5;
+            border-left: 4px solid #10b981;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            font-size: 14px;
+            color: #6b7280;
+            text-align: center;
+        }
+        .footer a {
+            color: #4f46e5;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <div class="logo">OpenDesk</div>
+            <div>Support Ticket System</div>
+        </div>
+        
+        <div class="content">
+            <h2>Ticket Resolved</h2>
+            <p>Hello,</p>
+            <p>Great news! Your support ticket has been resolved.</p>
+            
+            <div class="ticket-info">
+                <div class="ticket-number">{{ticket.ticketNumber}}</div>
+                <div class="ticket-title">{{ticket.title}}</div>
+                <div class="ticket-details">
+                    <strong>Priority:</strong> <span class="status-badge priority-{{ticket.priority}}">{{ticket.priority}}</span><br>
+                    <strong>Status:</strong> <span class="status-badge status-{{ticket.status}}">{{ticket.status}}</span><br>
+                    <strong>Created by:</strong> {{creator.name}} ({{creator.email}})<br>
+                    {{#if assignedTo}}
+                    <strong>Resolved by:</strong> {{assignedTo.name}} ({{assignedTo.email}})<br>
+                    {{/if}}
+                    <strong>Resolved at:</strong> {{ticket.updatedAt}}
+                </div>
+            </div>
+            
+            <div class="success-highlight">
+                <strong>✅ Resolution Complete</strong><br>
+                Your issue has been addressed and the ticket is now resolved. Please review the resolution and let us know if you need any further assistance.
+            </div>
+            
+            <p>If you're satisfied with the resolution, no further action is needed. If you need additional help or have follow-up questions, please reply to this ticket.</p>
+            
+            <a href="{{baseUrl}}/tickets/{{ticket.id}}" class="button">View Resolution</a>
+        </div>
+
+        <div class="footer">
+            <p>This is an automated message from OpenDesk Support System.</p>
+            <p>If you have questions, please contact us at <a href="mailto:support@opendesk.com">support@opendesk.com</a></p>
+        </div>
+    </div>
+</body>
+</html>
