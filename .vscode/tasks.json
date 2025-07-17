@@ -1,0 +1,13 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Install and build OpenDesk",
+			"type": "shell",
+			"command": "cd ${workspaceFolder} && npm run install:all && npm run build",
+			"group": "build",
+			"problemMatcher": [],
+			"isBackground": false
+		}
+	]
+}

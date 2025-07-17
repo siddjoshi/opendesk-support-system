@@ -1,0 +1,40 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm run install:all
+
+      - name: Run frontend linting and tests
+        run: |
+          cd frontend
+          npm run lint
+          npm test
+
+      - name: Run backend tests
+        run: |
+          cd backend
+          npm test
+
+      - name: Build packages
+        run: npm run build
+
+  # Add deployment jobs for different environments
+  # Example: staging, production
