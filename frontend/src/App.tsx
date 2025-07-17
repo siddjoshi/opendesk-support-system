@@ -22,6 +22,7 @@ import KnowledgeBase from './pages/KnowledgeBase';
 import ArticleDetail from './pages/ArticleDetail';
 import CreateEditArticle from './pages/CreateEditArticle';
 import CategoryManagement from './pages/CategoryManagement';
+import KnowledgeBaseAnalytics from './pages/KnowledgeBaseAnalytics';
 import NotFound from './pages/NotFound';
 
 // Protected route component
@@ -68,6 +69,7 @@ function App() {
           <Route path="new" element={<CreateEditArticle />} />
           <Route path="edit/:id" element={<CreateEditArticle />} />
           <Route path="categories" element={<CategoryManagement />} />
+          <Route path="analytics" element={<KnowledgeBaseAnalytics />} />
           <Route path=":slug" element={<ArticleDetail />} />
         </Route>
         <Route path="users" element={<UserManagement />} />

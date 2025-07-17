@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { 
   FolderIcon, 
   TagIcon, 
@@ -9,7 +9,9 @@ import {
   CalendarDaysIcon,
   ChevronRightIcon,
   HandThumbUpIcon,
-  HandThumbDownIcon
+  HandThumbDownIcon,
+  PencilIcon,
+  TrashIcon
 } from '@heroicons/react/24/outline';
 import { StarIcon as StarIconSolid } from '@heroicons/react/24/solid';
 import { useAuth } from '../context/AuthContext';
@@ -65,6 +67,7 @@ interface RelatedArticle {
 const ArticleDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [article, setArticle] = useState<Article | null>(null);
   const [userRating, setUserRating] = useState<UserRating | null>(null);
   const [relatedArticles, setRelatedArticles] = useState<RelatedArticle[]>([]);
@@ -147,6 +150,29 @@ const ArticleDetail: React.FC = () => {
       alert(err instanceof Error ? err.message : 'Failed to submit rating');
     } finally {
       setSubmittingRating(false);
+    }
+  };
+
+  const handleDeleteArticle = async () => {
+    if (!article || !user) return;
+    
+    if (!window.confirm('Are you sure you want to delete this article?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/articles/${article.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+
+      if (!response.ok) throw new Error('Failed to delete article');
+
+      navigate('/knowledge-base');
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to delete article');
     }
   };
 
@@ -253,6 +279,28 @@ const ArticleDetail: React.FC = () => {
                 </div>
                 
                 <div className="flex items-center space-x-4">
+                  {/* Edit/Delete buttons for agents/admins */}
+                  {user && (user.role === 'agent' || user.role === 'admin') && (
+                    <div className="flex space-x-2">
+                      <Link
+                        to={`/knowledge-base/edit/${article.id}`}
+                        className="flex items-center px-3 py-1 text-blue-600 hover:text-blue-800 border border-blue-200 rounded-md hover:bg-blue-50"
+                      >
+                        <PencilIcon className="h-4 w-4 mr-1" />
+                        Edit
+                      </Link>
+                      {user.role === 'admin' && (
+                        <button
+                          onClick={handleDeleteArticle}
+                          className="flex items-center px-3 py-1 text-red-600 hover:text-red-800 border border-red-200 rounded-md hover:bg-red-50"
+                        >
+                          <TrashIcon className="h-4 w-4 mr-1" />
+                          Delete
+                        </button>
+                      )}
+                    </div>
+                  )}
+                  
                   <div className="flex items-center">
                     <div className="flex mr-2">
                       {renderStars(article.averageRating)}

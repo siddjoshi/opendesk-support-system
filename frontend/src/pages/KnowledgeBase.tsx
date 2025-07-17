@@ -6,9 +6,14 @@ import {
   FolderIcon,
   StarIcon,
   EyeIcon,
-  ChevronRightIcon
+  ChevronRightIcon,
+  PlusIcon,
+  Cog6ToothIcon,
+  ChartBarIcon
 } from '@heroicons/react/24/outline';
 import { StarIcon as StarIconSolid } from '@heroicons/react/24/solid';
+
+import { useAuth } from '../context/AuthContext';
 
 interface Article {
   id: number;
@@ -63,6 +68,7 @@ interface Pagination {
 }
 
 const KnowledgeBase: React.FC = () => {
+  const { user } = useAuth();
   const [articles, setArticles] = useState<Article[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
@@ -221,8 +227,45 @@ const KnowledgeBase: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">Knowledge Base</h1>
-        <p className="text-gray-600">Find answers to common questions and get help with your issues.</p>
+        <div className="flex justify-between items-center mb-4">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Knowledge Base</h1>
+            <p className="text-gray-600">Find answers to common questions and get help with your issues.</p>
+          </div>
+          
+          {/* Action Buttons for Agents/Admins */}
+          {user && (user.role === 'agent' || user.role === 'admin') && (
+            <div className="flex space-x-4">
+              <Link
+                to="/knowledge-base/new"
+                className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                <PlusIcon className="h-5 w-5 mr-2" />
+                New Article
+              </Link>
+              
+              {user.role === 'admin' && (
+                <>
+                  <Link
+                    to="/knowledge-base/categories"
+                    className="flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
+                  >
+                    <Cog6ToothIcon className="h-5 w-5 mr-2" />
+                    Manage Categories
+                  </Link>
+                  
+                  <Link
+                    to="/knowledge-base/analytics"
+                    className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                  >
+                    <ChartBarIcon className="h-5 w-5 mr-2" />
+                    Analytics
+                  </Link>
+                </>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Search Bar */}
