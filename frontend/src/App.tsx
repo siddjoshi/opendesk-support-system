@@ -20,6 +20,8 @@ import ProfileSettings from './pages/ProfileSettings';
 import GeneralSettings from './pages/GeneralSettings';
 import KnowledgeBase from './pages/KnowledgeBase';
 import ArticleDetail from './pages/ArticleDetail';
+import CreateEditArticle from './pages/CreateEditArticle';
+import CategoryManagement from './pages/CategoryManagement';
 import NotFound from './pages/NotFound';
 
 // Protected route component
@@ -63,6 +65,9 @@ function App() {
         </Route>
         <Route path="knowledge-base">
           <Route index element={<KnowledgeBase />} />
+          <Route path="new" element={<CreateEditArticle />} />
+          <Route path="edit/:id" element={<CreateEditArticle />} />
+          <Route path="categories" element={<CategoryManagement />} />
           <Route path=":slug" element={<ArticleDetail />} />
         </Route>
         <Route path="users" element={<UserManagement />} />
