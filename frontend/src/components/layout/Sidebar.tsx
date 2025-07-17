@@ -6,7 +6,8 @@ import {
   HomeIcon, 
   TicketIcon, 
   UsersIcon,
-  Cog6ToothIcon 
+  Cog6ToothIcon,
+  BookOpenIcon
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../../context/AuthContext';
 
@@ -18,6 +19,7 @@ interface SidebarProps {
 const navigation = [
   { name: 'Dashboard', href: '/', icon: HomeIcon },
   { name: 'Tickets', href: '/tickets', icon: TicketIcon },
+  { name: 'Knowledge Base', href: '/knowledge-base', icon: BookOpenIcon },
   { name: 'Users', href: '/users', icon: UsersIcon },
   { name: 'Settings', href: '/settings', icon: Cog6ToothIcon },
 ];

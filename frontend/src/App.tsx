@@ -18,6 +18,8 @@ import SettingsLayout from './pages/SettingsLayout';
 import NotificationSettings from './pages/NotificationSettings';
 import ProfileSettings from './pages/ProfileSettings';
 import GeneralSettings from './pages/GeneralSettings';
+import KnowledgeBase from './pages/KnowledgeBase';
+import ArticleDetail from './pages/ArticleDetail';
 import NotFound from './pages/NotFound';
 
 // Protected route component
@@ -58,6 +60,10 @@ function App() {
           <Route index element={<TicketList />} />
           <Route path="new" element={<CreateTicket />} />
           <Route path=":id" element={<TicketDetail />} />
+        </Route>
+        <Route path="knowledge-base">
+          <Route index element={<KnowledgeBase />} />
+          <Route path=":slug" element={<ArticleDetail />} />
         </Route>
         <Route path="users" element={<UserManagement />} />
         <Route path="settings" element={<SettingsLayout />}>
