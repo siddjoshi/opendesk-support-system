@@ -1,11 +1,27 @@
 import { Router, Request, Response } from 'express';
 import { authenticate, authorize } from '../middleware/auth.middleware';
 import { validateUserCreation } from '../middleware/validators';
+import {
+  getUserProfile,
+  updateUserProfile,
+  getNotificationPreferences,
+  updateNotificationPreferences
+} from '../controllers/user.controller';
 
 const router = Router();
 
-// User routes - all protected and require admin privileges
+// User routes - protected with authentication
 router.use(authenticate);
+
+// Profile routes - accessible to all authenticated users
+router.get('/profile', getUserProfile);
+router.put('/profile', updateUserProfile);
+
+// Notification preference routes - accessible to all authenticated users
+router.get('/notifications', getNotificationPreferences);
+router.put('/notifications', updateNotificationPreferences);
+
+// Admin-only user management routes
 router.use(authorize('admin'));
 
 // Get all users

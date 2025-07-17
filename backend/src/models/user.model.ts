@@ -10,6 +10,14 @@ interface UserAttributes {
   role: 'customer' | 'agent' | 'admin';
   isActive: boolean;
   lastLogin?: Date | null;
+  emailNotifications?: {
+    ticketCreated: boolean;
+    ticketUpdated: boolean;
+    ticketAssigned: boolean;
+    ticketCommented: boolean;
+    ticketResolved: boolean;
+    ticketClosed: boolean;
+  };
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -24,6 +32,14 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
   public role!: 'customer' | 'agent' | 'admin';
   public isActive!: boolean;
   public lastLogin!: Date | null;
+  public emailNotifications!: {
+    ticketCreated: boolean;
+    ticketUpdated: boolean;
+    ticketAssigned: boolean;
+    ticketCommented: boolean;
+    ticketResolved: boolean;
+    ticketClosed: boolean;
+  };
   
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -70,6 +86,18 @@ User.init(
     lastLogin: {
       type: DataTypes.DATE,
       allowNull: true,
+    },
+    emailNotifications: {
+      type: DataTypes.JSON,
+      allowNull: false,
+      defaultValue: {
+        ticketCreated: true,
+        ticketUpdated: true,
+        ticketAssigned: true,
+        ticketCommented: true,
+        ticketResolved: true,
+        ticketClosed: true,
+      },
     },
   },
   {
