@@ -14,6 +14,10 @@ import TicketList from './pages/TicketList';
 import TicketDetail from './pages/TicketDetail';
 import CreateTicket from './pages/CreateTicket';
 import UserManagement from './pages/UserManagement';
+import SettingsLayout from './pages/SettingsLayout';
+import NotificationSettings from './pages/NotificationSettings';
+import ProfileSettings from './pages/ProfileSettings';
+import GeneralSettings from './pages/GeneralSettings';
 import NotFound from './pages/NotFound';
 
 // Protected route component
@@ -56,6 +60,11 @@ function App() {
           <Route path=":id" element={<TicketDetail />} />
         </Route>
         <Route path="users" element={<UserManagement />} />
+        <Route path="settings" element={<SettingsLayout />}>
+          <Route path="notifications" element={<NotificationSettings />} />
+          <Route path="profile" element={<ProfileSettings />} />
+          <Route path="general" element={<GeneralSettings />} />
+        </Route>
       </Route>
 
       {/* 404 route */}
