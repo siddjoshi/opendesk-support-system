@@ -13,6 +13,7 @@ import Dashboard from './pages/Dashboard';
 import TicketList from './pages/TicketList';
 import TicketDetail from './pages/TicketDetail';
 import CreateTicket from './pages/CreateTicket';
+import Reports from './pages/Reports';
 import UserManagement from './pages/UserManagement';
 import SettingsLayout from './pages/SettingsLayout';
 import NotificationSettings from './pages/NotificationSettings';
@@ -59,6 +60,7 @@ function App() {
           <Route path="new" element={<CreateTicket />} />
           <Route path=":id" element={<TicketDetail />} />
         </Route>
+        <Route path="reports" element={<Reports />} />
         <Route path="users" element={<UserManagement />} />
         <Route path="settings" element={<SettingsLayout />}>
           <Route path="notifications" element={<NotificationSettings />} />
