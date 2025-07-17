@@ -1,6 +1,15 @@
 import { Request, Response, NextFunction } from 'express';
 import { body, validationResult } from 'express-validator';
 
+// Generic validation middleware
+export const validate = (req: Request, res: Response, next: NextFunction) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  next();
+};
+
 // Validation middleware for login request
 export const validateLogin = [
   body('email').isEmail().withMessage('Please enter a valid email'),
