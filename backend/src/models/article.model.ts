@@ -2,6 +2,7 @@ import { DataTypes, Model } from 'sequelize';
 import sequelize from '../config/database';
 import User from './user.model';
 import Category from './category.model';
+import sanitizeHtml from 'sanitize-html';
 
 interface ArticleAttributes {
   id?: number;
@@ -136,8 +137,8 @@ Article.init(
         }
         if (!article.excerpt && article.content) {
           // Create excerpt from content (first 150 characters)
-          const plainText = article.content.replace(/<[^>]*>/g, '');
-          article.excerpt = plainText.length > 150 ? plainText.substring(0, 150) + '...' : plainText;
+          const sanitizedContent = sanitizeHtml(article.content, { allowedTags: [], allowedAttributes: {} });
+          article.excerpt = sanitizedContent.length > 150 ? sanitizedContent.substring(0, 150) + '...' : sanitizedContent;
         }
         if (article.status === 'published' && !article.publishedAt) {
           article.publishedAt = new Date();
@@ -148,8 +149,8 @@ Article.init(
           article.slug = article.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
         }
         if (article.changed('content') && !article.changed('excerpt')) {
-          const plainText = article.content.replace(/<[^>]*>/g, '');
-          article.excerpt = plainText.length > 150 ? plainText.substring(0, 150) + '...' : plainText;
+          const sanitizedContent = sanitizeHtml(article.content, { allowedTags: [], allowedAttributes: {} });
+          article.excerpt = sanitizedContent.length > 150 ? sanitizedContent.substring(0, 150) + '...' : sanitizedContent;
         }
         if (article.changed('status') && article.status === 'published' && !article.publishedAt) {
           article.publishedAt = new Date();
