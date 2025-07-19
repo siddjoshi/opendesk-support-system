@@ -138,7 +138,7 @@ class ReportsService {
           ) as avg_resolution_time
         FROM users u
         LEFT JOIN tickets t ON u.id = t.assigned_to_id
-        WHERE u.role = 'agent'
+        WHERE u.role = '${ROLE_AGENT}'
         ${startDate && endDate ? 'AND t.created_at BETWEEN :startDate AND :endDate' : ''}
         GROUP BY u.id, u.name
         ORDER BY resolved_tickets DESC
