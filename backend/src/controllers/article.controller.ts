@@ -154,7 +154,7 @@ export const getArticleById = async (req: Request, res: Response) => {
     }
 
     // Check if user has permission to view the article
-    if (req.user?.role === 'customer' && (!article.isPublic || article.status !== 'published')) {
+    if (!req.user || req.user.role === 'customer' && (!article.isPublic || article.status !== 'published')) {
       return res.status(403).json({ message: 'Access denied' });
     }
 
