@@ -86,7 +86,7 @@ export const getAllArticles = async (req: Request, res: Response) => {
       whereClause.status = status;
     } else {
       // Default to published articles for non-admin users
-      if (req.user.role === 'customer') {
+      if (req.user?.role === 'customer') {
         whereClause.status = 'published';
         whereClause.isPublic = true;
       }

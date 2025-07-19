@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { PlusIcon, FunnelIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
@@ -21,6 +20,8 @@ const TicketList: React.FC = () => {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  
+  console.log('Current user role:', user?.role); // Keep user for potential future use
   
   // Filter states
   const [statusFilter, setStatusFilter] = useState('all');

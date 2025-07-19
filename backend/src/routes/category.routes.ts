@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import rateLimit from 'express-rate-limit';
 import {
   createCategory,
   getAllCategories,
@@ -12,6 +13,13 @@ import { body } from 'express-validator';
 import { validate } from '../middleware/validators';
 
 const router = Router();
+
+// Rate limiter: Maximum of 10 delete requests per 15 minutes
+const deleteRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // Limit each IP to 10 requests per windowMs
+  message: 'Too many delete requests from this IP, please try again after 15 minutes.',
+});
 
 // Validation middleware
 const categoryValidation = [
@@ -44,6 +52,6 @@ router.get('/:id', getCategoryById);
 // Protected routes (authentication required)
 router.post('/', authenticate, categoryValidation, validate, createCategory);
 router.put('/:id', authenticate, categoryValidation, validate, updateCategory);
-router.delete('/:id', authenticate, deleteCategory);
+router.delete('/:id', authenticate, deleteRateLimiter, deleteCategory);
 
 export default router;
