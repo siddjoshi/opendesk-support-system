@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { 
-  ChatBubbleLeftIcon, 
   PaperClipIcon, 
   ArrowLeftIcon,
   UserCircleIcon,

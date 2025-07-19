@@ -2,12 +2,18 @@ import { Router, Request, Response } from 'express';
 import authRoutes from './auth.routes';
 import ticketRoutes from './ticket.routes';
 import userRoutes from './user.routes';
+import articleRoutes from './article.routes';
+import categoryRoutes from './category.routes';
+import tagRoutes from './tag.routes';
 
 const router = Router();
 
 router.use('/auth', authRoutes);
 router.use('/tickets', ticketRoutes);
 router.use('/users', userRoutes);
+router.use('/articles', articleRoutes);
+router.use('/categories', categoryRoutes);
+router.use('/tags', tagRoutes);
 
 // Health check endpoint
 router.get('/health', (req, res) => {
