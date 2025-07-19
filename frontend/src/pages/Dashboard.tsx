@@ -26,29 +26,55 @@ const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const formatTime = (hours: number): string => {
+    if (hours < 1) {
+      return `${Math.round(hours * 60)}m`;
+    }
+    return `${Math.round(hours)}h ${Math.round((hours % 1) * 60)}m`;
+  };
+
+  const formatStatus = (status: string): string => {
+    return status.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+  };
+
+  const formatPriority = (priority: string): string => {
+    return priority.charAt(0).toUpperCase() + priority.slice(1);
+  };
+
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        // In a real app, you would fetch this data from your API
-        // For now, we'll simulate some data
-        
-        // Simulate API call delay
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        // Mock data
+        const token = localStorage.getItem('token');
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+
+        // Fetch real stats from the reports API
+        const statsResponse = await axios.get('/api/reports/stats', config);
+        const statsData = statsResponse.data.data;
+
+        // Format the stats for the dashboard
         setStats({
-          totalTickets: 23,
-          openTickets: 8,
-          resolvedTickets: 15,
-          avgResolutionTime: '5h 23m',
+          totalTickets: statsData.totalTickets,
+          openTickets: statsData.openTickets,
+          resolvedTickets: statsData.resolvedTickets,
+          avgResolutionTime: formatTime(statsData.avgResolutionTime),
         });
+
+        // Fetch recent tickets
+        const ticketsResponse = await axios.get('/api/tickets?limit=5', config);
+        const recentTicketsData = ticketsResponse.data.tickets.map((ticket: any) => ({
+          id: ticket.id,
+          title: ticket.title,
+          status: formatStatus(ticket.status),
+          priority: formatPriority(ticket.priority),
+          created: new Date(ticket.createdAt).toLocaleDateString(),
+          requester: ticket.creator?.name || 'Unknown'
+        }));
         
-        setRecentTickets([
-          { id: 1, title: 'Cannot login to the application', status: 'Open', priority: 'High', created: '2023-08-25', requester: 'John Doe' },
-          { id: 2, title: 'Error when uploading files', status: 'In Progress', priority: 'Medium', created: '2023-08-24', requester: 'Jane Smith' },
-          { id: 3, title: 'Feature request: Export to PDF', status: 'Open', priority: 'Low', created: '2023-08-23', requester: 'Mike Johnson' },
-        ]);
-        
+        setRecentTickets(recentTicketsData);
         setLoading(false);
       } catch (err) {
         console.error('Error fetching dashboard data:', err);
