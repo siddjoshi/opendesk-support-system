@@ -1,3 +1,4 @@
+import rateLimit from 'express-rate-limit';
 import { Router } from 'express';
 import {
   createArticle,
@@ -14,6 +15,13 @@ import { body } from 'express-validator';
 import { validate } from '../middleware/validators';
 
 const router = Router();
+
+// Rate limiter: Maximum of 10 delete requests per 15 minutes
+const deleteRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // Limit each IP to 10 requests per windowMs
+  message: 'Too many delete requests from this IP, please try again after 15 minutes.',
+});
 
 // Validation middleware
 const articleValidation = [
@@ -66,7 +74,7 @@ router.get('/:id/related', getRelatedArticles);
 // Protected routes (authentication required)
 router.post('/', authenticate, articleValidation, validate, createArticle);
 router.put('/:id', authenticate, articleValidation, validate, updateArticle);
-router.delete('/:id', authenticate, deleteArticle);
+router.delete('/:id', authenticate, deleteRateLimiter, deleteArticle);
 router.post('/:id/rate', authenticate, ratingValidation, validate, rateArticle);
 
 export default router;
