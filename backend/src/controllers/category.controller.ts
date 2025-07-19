@@ -165,8 +165,22 @@ export const updateCategory = async (req: Request, res: Response) => {
     }
 
     // Check for circular reference if parentId is being updated
-    if (parentId && parseInt(parentId) === category.id) {
-      return res.status(400).json({ message: 'A category cannot be its own parent' });
+    if (parentId) {
+      const checkCircularReference = async (currentId: number, targetId: number): Promise<boolean> => {
+        if (currentId === targetId) {
+          return true;
+        }
+        const parentCategory = await Category.findByPk(currentId, { attributes: ['parentId'] });
+        if (parentCategory?.parentId) {
+          return checkCircularReference(parentCategory.parentId, targetId);
+        }
+        return false;
+      };
+
+      const isCircular = await checkCircularReference(parseInt(parentId), category.id);
+      if (isCircular) {
+        return res.status(400).json({ message: 'Circular reference detected in category hierarchy' });
+      }
     }
 
     // Update the category
