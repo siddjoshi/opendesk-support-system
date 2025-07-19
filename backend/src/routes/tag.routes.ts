@@ -40,6 +40,14 @@ router.get('/:id', getTagById);
 // Protected routes (authentication required)
 router.post('/', authenticate, tagValidation, validate, createTag);
 router.put('/:id', authenticate, tagValidation, validate, updateTag);
-router.delete('/:id', authenticate, deleteTag);
+import rateLimit from 'express-rate-limit';
+
+const deleteRateLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 10, // limit each IP to 10 delete requests per windowMs
+  message: 'Too many delete requests from this IP, please try again after a minute',
+});
+
+router.delete('/:id', deleteRateLimiter, authenticate, deleteTag);
 
 export default router;

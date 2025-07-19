@@ -27,7 +27,8 @@
     "pg": "^8.11.3",
     "redis": "^5.6.0",
     "sequelize": "^6.33.0",
-    "winston": "^3.10.0"
+    "winston": "^3.10.0",
+    "express-rate-limit": "^8.0.1"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.3",
