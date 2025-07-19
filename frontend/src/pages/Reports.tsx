@@ -19,6 +19,39 @@ interface DashboardStats {
   avgResolutionTime: number;
 }
 
+interface TicketTrend {
+  date: string;
+  created: number;
+  resolved: number;
+}
+
+interface PriorityDistribution {
+  priority: string;
+  count: number;
+}
+
+interface StatusDistribution {
+  status: string;
+  count: number;
+}
+
+interface AgentPerformance {
+  agentId: number;
+  agentName: string;
+  assignedTickets: number;
+  resolvedTickets: number;
+  avgResolutionTime: number;
+  resolutionRate: number;
+}
+
+interface SLAComplianceData {
+  priority: string;
+  totalTickets: number;
+  compliantTickets: number;
+  complianceRate: number;
+  targetHours: number;
+}
+
 const Reports: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats>({
     totalTickets: 0,
@@ -29,11 +62,11 @@ const Reports: React.FC = () => {
     avgResolutionTime: 0
   });
   
-  const [ticketTrends, setTicketTrends] = useState<any[]>([]);
-  const [priorityDistribution, setPriorityDistribution] = useState<any[]>([]);
-  const [statusDistribution, setStatusDistribution] = useState<any[]>([]);
-  const [agentPerformance, setAgentPerformance] = useState<any[]>([]);
-  const [slaCompliance, setSlaCompliance] = useState<any[]>([]);
+  const [ticketTrends, setTicketTrends] = useState<TicketTrend[]>([]);
+  const [priorityDistribution, setPriorityDistribution] = useState<PriorityDistribution[]>([]);
+  const [statusDistribution, setStatusDistribution] = useState<StatusDistribution[]>([]);
+  const [agentPerformance, setAgentPerformance] = useState<AgentPerformance[]>([]);
+  const [slaCompliance, setSlaCompliance] = useState<SLAComplianceData[]>([]);
   
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -84,9 +117,19 @@ const Reports: React.FC = () => {
         setSlaCompliance(slaResponse.data.data);
         
         setLoading(false);
-      } catch (err: any) {
-        console.error('Error fetching report data:', err);
-        setError(err.response?.data?.message || 'Failed to load report data');
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          console.error('Error fetching report data:', err.message);
+          setError(err.message || 'Failed to load report data');
+        } else if (err && typeof err === 'object' && 'response' in err) {
+          // Handle axios errors
+          const axiosError = err as any;
+          console.error('Error fetching report data:', axiosError);
+          setError(axiosError.response?.data?.message || 'Failed to load report data');
+        } else {
+          console.error('Unexpected error:', err);
+          setError('Failed to load report data');
+        }
         setLoading(false);
       }
     };

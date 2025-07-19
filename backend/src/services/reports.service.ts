@@ -3,6 +3,7 @@ import sequelize from '../config/database';
 import Ticket from '../models/ticket.model';
 import User from '../models/user.model';
 import logger from '../config/logger';
+import { USER_ROLES, SLA_TARGETS, TICKET_STATUSES } from '../config/constants';
 
 interface TicketStatsResponse {
   totalTickets: number;
@@ -54,10 +55,10 @@ class ReportsService {
 
       const [totalTickets, openTickets, inProgressTickets, resolvedTickets, closedTickets] = await Promise.all([
         Ticket.count({ where: whereClause }),
-        Ticket.count({ where: { ...whereClause, status: 'open' } }),
-        Ticket.count({ where: { ...whereClause, status: 'in_progress' } }),
-        Ticket.count({ where: { ...whereClause, status: 'resolved' } }),
-        Ticket.count({ where: { ...whereClause, status: 'closed' } })
+        Ticket.count({ where: { ...whereClause, status: TICKET_STATUSES.OPEN } }),
+        Ticket.count({ where: { ...whereClause, status: TICKET_STATUSES.IN_PROGRESS } }),
+        Ticket.count({ where: { ...whereClause, status: TICKET_STATUSES.RESOLVED } }),
+        Ticket.count({ where: { ...whereClause, status: TICKET_STATUSES.CLOSED } })
       ]);
 
       // Calculate average resolution time for resolved tickets
@@ -86,7 +87,7 @@ class ReportsService {
         SELECT 
           DATE(created_at) as date,
           COUNT(*) as created,
-          COUNT(CASE WHEN status = 'resolved' OR status = 'closed' THEN 1 END) as resolved
+          COUNT(CASE WHEN status = '${TICKET_STATUSES.RESOLVED}' OR status = '${TICKET_STATUSES.CLOSED}' THEN 1 END) as resolved
         FROM tickets 
         WHERE created_at BETWEEN :startDate AND :endDate
         GROUP BY DATE(created_at)
@@ -127,18 +128,18 @@ class ReportsService {
           u.id as agent_id,
           u.name as agent_name,
           COUNT(t.id) as assigned_tickets,
-          COUNT(CASE WHEN t.status = 'resolved' OR t.status = 'closed' THEN 1 END) as resolved_tickets,
+          COUNT(CASE WHEN t.status = '${TICKET_STATUSES.RESOLVED}' OR t.status = '${TICKET_STATUSES.CLOSED}' THEN 1 END) as resolved_tickets,
           COALESCE(
             AVG(
               CASE 
-                WHEN t.status = 'resolved' OR t.status = 'closed' 
+                WHEN t.status = '${TICKET_STATUSES.RESOLVED}' OR t.status = '${TICKET_STATUSES.CLOSED}' 
                 THEN EXTRACT(EPOCH FROM (t.updated_at - t.created_at)) / 3600
               END
             ), 0
           ) as avg_resolution_time
         FROM users u
         LEFT JOIN tickets t ON u.id = t.assigned_to_id
-        WHERE u.role = '${ROLE_AGENT}'
+        WHERE u.role = '${USER_ROLES.AGENT}'
         ${startDate && endDate ? 'AND t.created_at BETWEEN :startDate AND :endDate' : ''}
         GROUP BY u.id, u.name
         ORDER BY resolved_tickets DESC
@@ -237,7 +238,7 @@ class ReportsService {
     try {
       const whereClause: any = {
         status: {
-          [Op.in]: ['resolved', 'closed']
+          [Op.in]: [TICKET_STATUSES.RESOLVED, TICKET_STATUSES.CLOSED]
         }
       };
       
@@ -251,7 +252,7 @@ class ReportsService {
         SELECT 
           AVG(EXTRACT(EPOCH FROM (updated_at - created_at)) / 3600) as avg_hours
         FROM tickets 
-        WHERE status IN ('resolved', 'closed')
+        WHERE status IN ('${TICKET_STATUSES.RESOLVED}', '${TICKET_STATUSES.CLOSED}')
         ${startDate && endDate ? 'AND created_at BETWEEN :startDate AND :endDate' : ''}
       `;
 
@@ -272,17 +273,12 @@ class ReportsService {
    */
   public async getSLACompliance(startDate?: Date, endDate?: Date): Promise<any> {
     try {
-      // SLA targets (in hours) based on priority
-      const slaTargets = {
-        urgent: 4,
-        high: 8,
-        medium: 24,
-        low: 72
-      };
+      // Use configurable SLA targets from constants
+      const slaTargets = SLA_TARGETS;
 
       const whereClause: any = {
         status: {
-          [Op.in]: ['resolved', 'closed']
+          [Op.in]: [TICKET_STATUSES.RESOLVED, TICKET_STATUSES.CLOSED]
         }
       };
       

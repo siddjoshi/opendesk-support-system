@@ -9,11 +9,13 @@ import {
   exportReportsCSV
 } from '../controllers/reports.controller';
 import { authenticate } from '../middleware/auth.middleware';
+import { reportsRateLimit } from '../middleware/rateLimit.middleware';
 
 const router = express.Router();
 
-// All routes require authentication
+// All routes require authentication and rate limiting
 router.use(authenticate);
+router.use(reportsRateLimit);
 
 // Dashboard statistics
 router.get('/stats', getDashboardStats);

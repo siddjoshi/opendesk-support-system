@@ -74,7 +74,7 @@ async function testReportsEndpoints() {
   }
 }
 
-// Only run if server is likely to be running
+// Only run if not in test environment (script is for testing endpoints, not unit tests)
 if (process.env.NODE_ENV !== 'test') {
   testReportsEndpoints();
 }
